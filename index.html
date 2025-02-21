@@ -72,29 +72,6 @@
         .activate-button:hover {
             background-color: darkorange;
         }
-
-        /* Spinning Rat Background */
-        .rat-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            animation: spinRat 5s infinite linear;
-            z-index: -1;
-        }
-
-        .rat-container img {
-            width: 100%;
-            height: 100%;
-        }
-
-        @keyframes spinRat {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
     </style>
 </head>
 <body>
@@ -117,15 +94,10 @@
     </div>
     <button class="activate-button" onclick="startSlotMachine()">ACTIVATE</button>
 
-    <!-- Spinning Rat Image Background -->
-    <div class="rat-container">
-        <img src="https://example.com/spinning-rat-image.png" alt="Spinning Rat">
-    </div>
-
     <script>
         // Height logic
         let height = parseFloat(localStorage.getItem("height")) || 64.00;
-        const heightMultiplier = 1.00000000000000005;
+        const heightMultiplier = 1.0000005;
 
         function updateHeight() {
             height *= heightMultiplier;
