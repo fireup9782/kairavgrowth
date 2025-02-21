@@ -73,7 +73,7 @@
             background-color: darkorange;
         }
 
-        /* Spinning Cube Styles */
+        /* Spinning Cube 3D Animation */
         .cube {
             position: absolute;
             top: 50%;
@@ -140,7 +140,7 @@
     <script>
         // Height logic
         let height = parseFloat(localStorage.getItem("height")) || 64.00;
-        const heightMultiplier = 1.0000000005;
+        const heightMultiplier = 1.00000000005;
 
         function updateHeight() {
             height *= heightMultiplier;
