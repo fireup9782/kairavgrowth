@@ -38,6 +38,9 @@
             font-size: 2rem;
             font-weight: bold;
         }
+        .money-display.negative {
+            color: red;
+        }
         .slot-machine {
             margin-top: 20px;
             display: flex;
@@ -90,10 +93,15 @@
     <button class="activate-button" onclick="startSlotMachine()">ACTIVATE</button>
 
     <script>
-        let startTime = Date.now() - (parseInt(localStorage.getItem("stopwatchStartTime")) || 0);
-        let money = parseInt(localStorage.getItem("money")) || 1000;
-        localStorage.setItem("stopwatchStartTime", startTime);
+        let startTime = parseInt(localStorage.getItem("stopwatchStartTime"));
+        if (!startTime) {
+            startTime = Date.now();
+            localStorage.setItem("stopwatchStartTime", startTime);
+        }
 
+        let money = parseInt(localStorage.getItem("money")) || 1000;
+        updateMoneyDisplay();
+        
         function updateTimer() {
             const now = Date.now();
             const elapsedTime = now - startTime;
@@ -106,7 +114,7 @@
             let totalHours = Math.floor(totalMinutes / 60);
             let hours = totalHours % 24;
             let days = Math.floor(totalHours / 24) % 7;
-            let weeks = Math.floor(totalHours / 168);
+            let weeks = Math.floor(totalHours / (7 * 24));
             
             document.getElementById("weeks").innerText = weeks.toString().padStart(2, '0');
             document.getElementById("days").innerText = days.toString().padStart(2, '0');
@@ -117,14 +125,23 @@
             requestAnimationFrame(updateTimer);
         }
 
+        function updateMoneyDisplay() {
+            let moneyElement = document.getElementById("money");
+            moneyElement.innerText = `$${money}`;
+            if (money < 0) {
+                moneyElement.classList.add("negative");
+            } else {
+                moneyElement.classList.remove("negative");
+            }
+        }
+
         function startSlotMachine() {
-            if (money < 100) return;
             let moneyDecrease = 100;
             let interval = setInterval(() => {
                 if (moneyDecrease > 0) {
                     money -= 1;
                     moneyDecrease -= 1;
-                    document.getElementById("money").innerText = `$${money}`;
+                    updateMoneyDisplay();
                 } else {
                     clearInterval(interval);
                 }
@@ -156,7 +173,7 @@
                     money += 50;
                 }
                 localStorage.setItem("money", money);
-                document.getElementById("money").innerText = `$${money}`;
+                updateMoneyDisplay();
             })();
         }
 
