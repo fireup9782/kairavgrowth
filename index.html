@@ -101,7 +101,20 @@
 
         let money = parseInt(localStorage.getItem("money")) || 1000;
         updateMoneyDisplay();
-        
+
+        // Initialize height and multiplier
+        let height = 64.00;
+        const heightMultiplier = 1.0000005;
+
+        // Function to update height
+        function updateHeight() {
+            height *= heightMultiplier;
+            document.getElementById("height").innerText = height.toFixed(12) + " inches";
+        }
+
+        // Update the height every millisecond
+        setInterval(updateHeight, 1);
+
         function updateTimer() {
             const now = Date.now();
             const elapsedTime = now - startTime;
