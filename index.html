@@ -93,6 +93,20 @@
     <button class="activate-button" onclick="startSlotMachine()">ACTIVATE</button>
 
     <script>
+        // Get or initialize height from localStorage
+        let height = parseFloat(localStorage.getItem("height")) || 64.00;
+        const heightMultiplier = 1.000000005;
+
+        // Update height every millisecond and store it in localStorage
+        function updateHeight() {
+            height *= heightMultiplier;
+            document.getElementById("height").innerText = height.toFixed(12) + " inches";
+            localStorage.setItem("height", height.toFixed(12)); // Store the height in localStorage
+        }
+
+        // Initialize the height update interval
+        setInterval(updateHeight, 1);
+
         let startTime = parseInt(localStorage.getItem("stopwatchStartTime"));
         if (!startTime) {
             startTime = Date.now();
@@ -101,19 +115,6 @@
 
         let money = parseInt(localStorage.getItem("money")) || 1000;
         updateMoneyDisplay();
-
-        // Initialize height and multiplier
-        let height = 64.00;
-        const heightMultiplier = 1.000000005;
-
-        // Function to update height
-        function updateHeight() {
-            height *= heightMultiplier;
-            document.getElementById("height").innerText = height.toFixed(12) + " inches";
-        }
-
-        // Update the height every millisecond
-        setInterval(updateHeight, 1);
 
         function updateTimer() {
             const now = Date.now();
