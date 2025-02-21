@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stopwatch</title>
+    <title>Stopwatch & Slot Machine</title>
     <style>
         body {
             display: flex;
@@ -27,16 +27,45 @@
             font-weight: bold;
         }
         .time-box {
-            padding: 20px;
+            padding: 10px;
             border: 2px solid black;
             border-radius: 10px;
-            min-width: 80px;
+            min-width: 60px;
             text-align: center;
         }
-        .height-display {
-            margin-top: 20px;
+        .height-display, .money-display {
+            margin-top: 10px;
             font-size: 2rem;
             font-weight: bold;
+        }
+        .slot-machine {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .slot-box {
+            padding: 15px;
+            border: 2px solid black;
+            border-radius: 10px;
+            min-width: 60px;
+            text-align: center;
+            background-color: lightgray;
+            transition: transform 0.1s ease-in-out;
+        }
+        .activate-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: gold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .activate-button:hover {
+            background-color: darkorange;
         }
     </style>
 </head>
@@ -51,10 +80,18 @@
         <div class="time-box" id="milliseconds">000</div>
     </div>
     <div class="height-display" id="height">64.00 inches</div>
+    <div class="money-display" id="money">$1000</div>
+    
+    <div class="slot-machine">
+        <div class="slot-box" id="slot1">7</div>
+        <div class="slot-box" id="slot2">7</div>
+        <div class="slot-box" id="slot3">7</div>
+    </div>
+    <button class="activate-button" onclick="startSlotMachine()">ACTIVATE</button>
 
     <script>
-        let startTime = parseInt(localStorage.getItem("stopwatchStartTime")) || Date.now();
-        let heightInches = parseFloat(localStorage.getItem("heightInches")) || 64.00;
+        let startTime = Date.now() - (parseInt(localStorage.getItem("stopwatchStartTime")) || 0);
+        let money = parseInt(localStorage.getItem("money")) || 1000;
         localStorage.setItem("stopwatchStartTime", startTime);
 
         function updateTimer() {
@@ -77,14 +114,50 @@
             document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
             document.getElementById("milliseconds").innerText = milliseconds.toString().padStart(3, '0');
-            
-            // Update height based on elapsed time
-            let growthFactor = Math.pow(1.00000005, elapsedTime);
-            let newHeight = 64.00 * growthFactor;
-            localStorage.setItem("heightInches", newHeight);
-            document.getElementById("height").innerText = `${newHeight.toFixed(2)} inches`;
-            
             requestAnimationFrame(updateTimer);
+        }
+
+        function startSlotMachine() {
+            if (money < 100) return;
+            let moneyDecrease = 100;
+            let interval = setInterval(() => {
+                if (moneyDecrease > 0) {
+                    money -= 1;
+                    moneyDecrease -= 1;
+                    document.getElementById("money").innerText = `$${money}`;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 1);
+            
+            let slots = ["🍒", "7", "🍋", "🍊", "⭐", "💎", "🔔"];
+            
+            function spinSlot(slotId, delay) {
+                return new Promise(resolve => {
+                    let interval = setInterval(() => {
+                        document.getElementById(slotId).innerText = slots[Math.floor(Math.random() * slots.length)];
+                    }, 50);
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        resolve(document.getElementById(slotId).innerText);
+                    }, delay);
+                });
+            }
+            
+            (async function() {
+                let result1 = await spinSlot("slot1", 500);
+                let result2 = await spinSlot("slot2", 1000);
+                let result3 = await spinSlot("slot3", 1500);
+                
+                if (result1 === result2 && result2 === result3) {
+                    if (result1 === "⭐") money += 1000;
+                    if (result1 === "7") money += 7777;
+                } else if (result1 === result2 || result2 === result3 || result1 === result3) {
+                    money += 50;
+                }
+                localStorage.setItem("money", money);
+                document.getElementById("money").innerText = `$${money}`;
+            })();
         }
 
         updateTimer();
