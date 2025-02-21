@@ -95,9 +95,9 @@
     <button class="activate-button" onclick="startSlotMachine()">ACTIVATE</button>
 
     <script>
-        // Height logic
+
         let height = parseFloat(localStorage.getItem("height")) || 64.00;
-        const heightMultiplier = 1.000000000005;
+        const heightMultiplier = 1.00000000000005;
 
         function updateHeight() {
             height *= heightMultiplier;
@@ -107,7 +107,6 @@
 
         setInterval(updateHeight, 1);
 
-        // Stopwatch logic
         let startTime = parseInt(localStorage.getItem("stopwatchStartTime"));
         if (!startTime) {
             startTime = Date.now();
