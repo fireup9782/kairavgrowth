@@ -33,6 +33,11 @@
             min-width: 80px;
             text-align: center;
         }
+        .height-display {
+            margin-top: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -45,13 +50,12 @@
         <div class="time-box" id="seconds">00</div>:
         <div class="time-box" id="milliseconds">000</div>
     </div>
+    <div class="height-display" id="height">64.00 inches</div>
 
     <script>
-        let startTime = localStorage.getItem("stopwatchStartTime");
-        if (!startTime) {
-            startTime = Date.now();
-            localStorage.setItem("stopwatchStartTime", startTime);
-        }
+        let startTime = parseInt(localStorage.getItem("stopwatchStartTime")) || Date.now();
+        let heightInches = parseFloat(localStorage.getItem("heightInches")) || 64.00;
+        localStorage.setItem("stopwatchStartTime", startTime);
 
         function updateTimer() {
             const now = Date.now();
@@ -73,6 +77,12 @@
             document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
             document.getElementById("milliseconds").innerText = milliseconds.toString().padStart(3, '0');
+            
+            // Update height based on elapsed time
+            let growthFactor = Math.pow(1.00000005, elapsedTime);
+            let newHeight = 64.00 * growthFactor;
+            localStorage.setItem("heightInches", newHeight);
+            document.getElementById("height").innerText = `${newHeight.toFixed(2)} inches`;
             
             requestAnimationFrame(updateTimer);
         }
